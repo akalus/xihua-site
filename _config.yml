@@ -1,14 +1,11 @@
-title: Your awesome title
+title: 路遥马急人生，愿平安喜乐
 author:
-  name: GitHub User
-  email: your-email@domain.com
+  name: xihua
+  email: xihuaxiaoge@outlook.com
 
 # The `>` after `description:` means to ignore line-breaks until next key.
 # If you want to omit the line-break after the end of text, use `>-` instead.
-description: >
-  Write an awesome description for your new site here. You can edit this line
-  in _config.yml. It will appear in your document head meta (for Google search
-  results) and in your feed.xml site description.
+description: 
 
 # Build settings
 
@@ -23,10 +20,11 @@ plugins:
 domain: akalus.github.io
 
 url: https://akalus.github.io
-baseurl: /xihua-site/
+baseurl: /xihua-site
 
 
 minima:
+  skin: solarized-dark
   # Minima date format.
   # Refer to https://shopify.github.io/liquid/filters/date/ if you want to customize this.
   #
