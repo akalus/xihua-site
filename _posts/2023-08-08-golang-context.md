@@ -108,4 +108,102 @@ A derived context is can be created in 4 ways
 
 * Passing request-scoped values - using WithValue() function of context package
 * With cancellation signals - using WithCancel() function of context package
-* With deadlines - using WithTimeout() function of context package
+* With deadlines - using WithDeadline() function of context package
+* With timeouts - using WithTimeout() function of context package
+
+Let's understand each of the above in details
+
+Used for passing request-scoped values. The complete signature of the function is
+
+```golang
+    withValue(parent Context, key, value interface{})(ctx Context)
+```
+
+It takes in a parent context,key,value and returns a derived context The derived context has key associated with the value.Here the parent context can be either context.Background() or any other context.Further,any context which is derived from this context will have this value.
+
+```golang
+    ctxRoot := context.Background()
+    ctxChild := context.WithValue(ctxRoot, "a", "x")
+    #Below ctxChildofChild has access to both pairs {"a":"x", "b":"y"} as it is derived from ctxChild
+    ctxChildofChild  := context.WithValue(ctxChild, "b", "y")
+```
+
+* injectMsgID is a net http middleware function that populates the "msgID" field in context
+* HelloWorld is the handler function for api "localhost:8080/welcome" which gets this msgID from context and sends it back as response headers
+
+```golang
+package main
+
+import (
+    "context"
+    "net/http"
+    "github.com/google/uuid"
+)
+
+func main() {
+    hellowordHandler := http.HandlerFunc(helloword)
+    http.Handle("/welcome", injectMsgID(helloWorldHandler))
+    http.ListenAndServe(":8080", nil)
+}
+
+func HelloWorld(w http.ResponseWriter, r *http.Request) {
+    msgID := ""
+    if m := r.Context().Value("msgID");m != nil {
+        if value, ok := m.(string);ok {
+            msgID = value
+        }
+    }
+    w.Header().Add("msgID", msgID)
+    w.Write([]byte("hello, world"))
+}
+func injectMsgID(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        msgID := uuid.New().String()
+        ctx := context.WithValue(r.Context(), "msgID", msgID)
+        req := r.WithContext(ctx)
+        next.ServeHTTP(w, req)
+})
+}
+```
+
+Simply do a curl call to the above request after running the above program
+
+```golang
+    curl -v http://localhost/welcome
+```
+
+Here will be the response.Notice the MsgID that gets populated in the response headers. The injectMsgID function acts as middleware and injects as unique msgID to the request context.
+
+```golang
+curl -v http://localhost:8080/welcome
+*   Trying ::1...
+* TCP_NODELAY set
+* Connected to localhost (::1) port 8080 (#0)
+> GET /do HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/7.54.0
+> Accept: */*
+> 
+< HTTP/1.1 200 OK
+< Msgid: a03ff1d4-1464-42e5-a0a8-743c5af29837
+< Date: Mon, 23 Dec 2019 16:51:01 GMT
+< Content-Length: 12
+< Content-Type: text/plain; charset=utf-8
+< 
+* Connection #0 to host localhost left intact
+```
+
+### context.WithCancel()
+
+Used for cancellation signals.Below is the signature of WithCancel() function
+
+```golang
+    func WithCancel(parent Context)(ctx Context, cancel CancelFunc)
+```
+
+context.WithCancel() function returns two things
+
+* Copy the parentContext with the new done channel.
+* A cancel function which when called closes this done channel
+
+Only the creater of this context should call the cancel function. It is highly not re
