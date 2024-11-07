@@ -140,7 +140,7 @@ func (a *adidasFactory) makeShoe() iShoe {
 func (a *adidasFactory) makeShort() iShort {
     return &adidasShort{short{logo: "adidas", size: 10}}    
 }
-````
+```
 #### nike_factory.go
 ```
 package main
@@ -157,7 +157,7 @@ func (n *nikeFactory) makeShort() iShort {
 }
 ```
 #### main.go
-`````````
+```
 package main
 
 func main() {
