@@ -20,7 +20,7 @@ plugins:
 domain: blog.ziyuan.fun
 
 url: https://blog.ziyuan.fun
-baseurl: /
+baseurl: ""
 
 
 minima:
