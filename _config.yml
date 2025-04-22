@@ -17,10 +17,10 @@ plugins:
 
 # Theme-specific settings
 #
-domain: akalus.github.io
+domain: blog.ziyuan.fun
 
-url: https://akalus.github.io
-baseurl: /xihua-site
+url: https://blog.ziyuan.fun
+baseurl: ""
 
 
 minima:
